@@ -2,6 +2,10 @@
 
 A Facebook Messenger bot written in Python3 with Selenium module that can send text or any other contents to specified user or fans club at desired time.
 
+## Screenshot 🖥
+
+![screenshot](screenshot/screenshot.png)
+
 ## Warning ⚠
 
 - This is not an official API, for that please visit [here](https://developers.facebook.com/docs/messenger-platform) for Facebook -chat bots.
