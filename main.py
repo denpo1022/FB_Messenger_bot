@@ -92,6 +92,7 @@ class FacebookMessageBot:
         text += current_time
         text_box.send_keys(text)
 
+    def send_text(self):
         # Click the send button because enter doesn't work
         send_button = self.driver.find_element_by_css_selector("button[name='send']")
         send_button.click()
@@ -267,17 +268,17 @@ def main():
     fb_bot.go_target_url(TARGET_URL["value"])
     fb_bot.fill_in_text(MESSAGE["value"])
 
-    # specify_time =
+    schedule.every().day.at(
+        (datetime.now() + timedelta(seconds=5)).strftime("%H:%M:%S")
+    ).do(fb_bot.send_text)
 
-    # schedule.every().day.at(
-    #     (datetime.now() + timedelta(minutes=1)).strftime("%H:%M")
-    # ).do(fb_bot.send_text, text_box)
-
-    # while True:
-    #     schedule.run_pending()
-    #     time.sleep(1)
-    #     if HAVE_DONE:
-    #         sys.exit()
+    global HAVE_DONE
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+        if HAVE_DONE:
+            fb_bot.driver.quit()
+            sys.exit()
 
 
 if __name__ == "__main__":
