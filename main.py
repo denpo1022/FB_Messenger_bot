@@ -15,7 +15,7 @@ import sys
 import time
 
 
-LOGIN_URL = "https://www.facebook.com/login.php"
+LOGIN_URL = "https://m.facebook.com/login.php"
 DELAY = 5  # seconds
 HAVE_DONE = False  # trigger variable
 THEME = "Dark"
@@ -45,12 +45,12 @@ class FacebookMessageBot:
 
         # Wait until the input box appear
         WebDriverWait(self.driver, DELAY).until(
-            EC.presence_of_element_located((By.ID, "email"))
+            EC.presence_of_element_located((By.ID, "m_login_email"))
         )
-        email_element = self.driver.find_element_by_id("email")
+        email_element = self.driver.find_element_by_id("m_login_email")
         email_element.send_keys(self.email)  # Give keyboard input
 
-        password_element = self.driver.find_element_by_id("pass")
+        password_element = self.driver.find_element_by_id("m_login_password")
         password_element.send_keys(self.password)  # Give password as input too
         password_element.send_keys(Keys.RETURN)
 
@@ -60,37 +60,41 @@ class FacebookMessageBot:
         WebDriverWait(self.driver, DELAY).until(EC.url_changes(target_url))
         self.driver.get(target_url)
 
-    def send_text(self, text):
+    def fill_in_text(self, text):
         # Wait until "send message" button appear and is clickable
         WebDriverWait(self.driver, DELAY).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,
-                    "img[src='https://static.xx.fbcdn.net/rsrc.php/v3/yg/r/111xWLHJ_6m.png']",
+                    "a[href^='/messages/thread/']",
                 )
             )
         )
         try:
-            # Click on send message button
             send_message_button = self.driver.find_element_by_css_selector(
-                "img[src='https://static.xx.fbcdn.net/rsrc.php/v3/yg/r/111xWLHJ_6m.png']"
+                "a[href^='/messages/thread/']"
             )
         except Exception as e:
             print(e)
 
         send_message_button.click()
+
         # Wait until the input text box appear
         WebDriverWait(self.driver, DELAY).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label=訊息]"))
+            EC.presence_of_element_located((By.ID, "composerInput"))
         )
         try:
-            text_box = self.driver.find_element_by_css_selector("[aria-label=訊息]")
+            text_box = self.driver.find_element_by_id("composerInput")
         except Exception as e:
             print(e)
+
         current_time = " Current time is " + datetime.now().strftime("%H:%M:%S")
         text += current_time
         text_box.send_keys(text)
-        text_box.send_keys(Keys.RETURN)
+
+        # Click the send button because enter doesn't work
+        send_button = self.driver.find_element_by_css_selector("button[name='send']")
+        send_button.click()
 
         global HAVE_DONE
         HAVE_DONE = True
@@ -261,16 +265,19 @@ def main():
     )
     fb_bot.login()
     fb_bot.go_target_url(TARGET_URL["value"])
+    fb_bot.fill_in_text(MESSAGE["value"])
 
-    schedule.every().day.at(
-        (datetime.now() + timedelta(minutes=1)).strftime("%H:%M")
-    ).do(fb_bot.send_text, MESSAGE["value"])
+    # specify_time =
 
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-        if HAVE_DONE:
-            sys.exit()
+    # schedule.every().day.at(
+    #     (datetime.now() + timedelta(minutes=1)).strftime("%H:%M")
+    # ).do(fb_bot.send_text, text_box)
+
+    # while True:
+    #     schedule.run_pending()
+    #     time.sleep(1)
+    #     if HAVE_DONE:
+    #         sys.exit()
 
 
 if __name__ == "__main__":
