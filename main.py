@@ -17,7 +17,6 @@ import time
 
 LOGIN_URL = "https://m.facebook.com/login.php"
 DELAY = 5  # seconds
-HAVE_DONE = False  # trigger variable
 THEME = "Dark"
 
 # The settings file will be in the same folder as this program
@@ -54,7 +53,15 @@ class FacebookMessageBot:
         password_element.send_keys(self.password)  # Give password as input too
         password_element.send_keys(Keys.RETURN)
 
-        time.sleep(DELAY)
+        # Wait until the confirm button is loaded
+        WebDriverWait(self.driver, DELAY).until(
+            EC.presence_of_element_located(
+                (
+                    By.CSS_SELECTOR,
+                    "a[href^='/login/save-device/cancel/?flow=interstitial_nux&nux_source=regular_login']",
+                )
+            )
+        )
 
     def go_target_url(self, target_url):
         WebDriverWait(self.driver, DELAY).until(EC.url_changes(target_url))
@@ -97,8 +104,7 @@ class FacebookMessageBot:
         send_button = self.driver.find_element_by_css_selector("button[name='send']")
         send_button.click()
 
-        global HAVE_DONE
-        HAVE_DONE = True
+        return schedule.CancelJob
 
 
 def make_window(theme):
@@ -159,11 +165,172 @@ def make_window(theme):
             )
         ],
         [
-            sg.Input(key="-INPUT TIME-", size=(20, 1)),
-            sg.CalendarButton(
-                "Cal Format %m-%d Jan 2020",
-                target="-INPUT TIME-",
-                format="%m-%d",
+            sg.Combo(
+                values=(
+                    "00",
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                ),
+                default_value=settings.get("-combo hour-", ""),
+                readonly=True,
+                k="-COMBO HOUR-",
+            ),
+            sg.Text(":"),
+            sg.Combo(
+                values=(
+                    "00",
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33",
+                    "34",
+                    "35",
+                    "36",
+                    "37",
+                    "38",
+                    "39",
+                    "40",
+                    "41",
+                    "42",
+                    "43",
+                    "44",
+                    "45",
+                    "46",
+                    "47",
+                    "48",
+                    "49",
+                    "50",
+                    "51",
+                    "52",
+                    "53",
+                    "54",
+                    "55",
+                    "56",
+                    "57",
+                    "58",
+                    "59",
+                ),
+                default_value=settings.get("-combo minute-", ""),
+                readonly=True,
+                k="-COMBO MINUTE-",
+            ),
+            sg.Text(":"),
+            sg.Combo(
+                values=(
+                    "00",
+                    "01",
+                    "02",
+                    "03",
+                    "04",
+                    "05",
+                    "06",
+                    "07",
+                    "08",
+                    "09",
+                    "10",
+                    "11",
+                    "12",
+                    "13",
+                    "14",
+                    "15",
+                    "16",
+                    "17",
+                    "18",
+                    "19",
+                    "20",
+                    "21",
+                    "22",
+                    "23",
+                    "24",
+                    "25",
+                    "26",
+                    "27",
+                    "28",
+                    "29",
+                    "30",
+                    "31",
+                    "32",
+                    "33",
+                    "34",
+                    "35",
+                    "36",
+                    "37",
+                    "38",
+                    "39",
+                    "40",
+                    "41",
+                    "42",
+                    "43",
+                    "44",
+                    "45",
+                    "46",
+                    "47",
+                    "48",
+                    "49",
+                    "50",
+                    "51",
+                    "52",
+                    "53",
+                    "54",
+                    "55",
+                    "56",
+                    "57",
+                    "58",
+                    "59",
+                ),
+                default_value=settings.get("-combo second-", ""),
+                readonly=True,
+                k="-COMBO SECOND-",
             ),
         ],
         # --------------------
@@ -246,6 +413,9 @@ def main():
                 settings["-input mail-"] = values["-INPUT MAIL-"]
                 settings["-input password-"] = values["-INPUT PASSWORD-"]
                 settings["-input url-"] = values["-INPUT URL-"]
+                settings["-combo hour-"] = values["-COMBO HOUR-"]
+                settings["-combo minute-"] = values["-COMBO MINUTE-"]
+                settings["-combo second-"] = values["-COMBO SECOND-"]
                 settings["-input message-"] = values["-MLINE MESSAGE-"]
                 break  # If none of the inputs is null, break from loop
 
@@ -266,17 +436,31 @@ def main():
     fb_bot.go_target_url(TARGET_URL["value"])
     fb_bot.fill_in_text(MESSAGE["value"])
 
-    schedule.every().day.at(
-        (datetime.now() + timedelta(seconds=5)).strftime("%H:%M:%S")
-    ).do(fb_bot.send_text)
+    if values["-R CURRENT-"]:  # If choose Current radio option
+        fb_bot.send_text()
+    else:  # If choose Specify time radio option
 
-    global HAVE_DONE
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
-        if HAVE_DONE:
-            fb_bot.driver.quit()
-            sys.exit()
+        # Combine time input into correct format (ex: 21:10:02)
+        input_time_string = (
+            values["-COMBO HOUR-"]
+            + ":"
+            + values["-COMBO MINUTE-"]
+            + ":"
+            + values["-COMBO SECOND-"]
+        )
+
+        # Create pending schedule task
+        schedule.every().day.at(
+            datetime.strptime(input_time_string, "%H:%M:%S").strftime("%H:%M:%S")
+        ).do(fb_bot.send_text)
+
+        # Check if any pending schedule every second until no more schedule
+        while len(schedule.default_scheduler.jobs) > 0:
+            schedule.run_pending()
+            time.sleep(1)
+
+    fb_bot.driver.quit()
+    sys.exit()
 
 
 if __name__ == "__main__":

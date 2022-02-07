@@ -18,8 +18,8 @@ A Facebook Messenger bot written in Python3 with Selenium module that can send t
 - [x] Create GUI for better user experience
 - [x] Remember user login information (saved as json at local directory)
 - [ ] Make the script be executable and portable so the people who are not familiar with Python can also use it easily
-- [ ] Rearrange the process of messenger bot to minimize the time delay between user desired time and actually the time that texts are sent (important)
-- [ ] Time scheduling option
+- [x] Rearrange the process of messenger bot to minimize the time delay between user desired time and actually the time that texts are sent (important)
+- [x] Time scheduling option
 
 ## Requirement packages
 
