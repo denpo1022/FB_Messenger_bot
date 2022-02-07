@@ -95,8 +95,6 @@ class FacebookMessageBot:
         except Exception as e:
             print(e)
 
-        current_time = " Current time is " + datetime.now().strftime("%H:%M:%S")
-        text += current_time
         text_box.send_keys(text)
 
     def send_text(self):
