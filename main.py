@@ -205,8 +205,6 @@ def declare_input_dict(input_name, values, window):
 
 
 def main():
-    global HAVE_DONE
-
     # Create the GUI window
     window = make_window(sg.theme(THEME))
 
