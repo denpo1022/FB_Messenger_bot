@@ -64,6 +64,10 @@ class FacebookMessageBot:
         )
 
     def go_target_url(self, target_url):
+        # Replace https://www to https://m
+        if target_url.startswith("https://www."):
+            target_url = "https://m." + target_url[12:]
+
         WebDriverWait(self.driver, DELAY).until(EC.url_changes(target_url))
         self.driver.get(target_url)
 
