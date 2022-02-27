@@ -24,7 +24,10 @@ settings = sg.UserSettings(path=".")
 
 
 class FacebookMessageBot:
-    def __init__(self, email, password, browser="Firefox"):
+    def __init__(self, email: str, password: str, browser="Firefox") -> None:
+        """
+        | Initialization of creating Messenger bot instance.
+        """
         # Store credentials for login
         self.email = email
         self.password = password
@@ -39,7 +42,10 @@ class FacebookMessageBot:
                 executable_path=GeckoDriverManager().install()
             )
 
-    def login(self):
+    def login(self) -> None:
+        """
+        | Controling Selenium browser object login FB using input data.
+        """
         self.go_target_url(LOGIN_URL)
 
         # Wait until the input box appear
@@ -63,7 +69,10 @@ class FacebookMessageBot:
             )
         )
 
-    def go_target_url(self, target_url):
+    def go_target_url(self, target_url: str) -> None:
+        """
+        | Controling Selenium browser go to the target url with proper wait function.
+        """
         # Replace https://www to https://m
         if target_url.startswith("https://www."):
             target_url = "https://m." + target_url[12:]
@@ -71,7 +80,10 @@ class FacebookMessageBot:
         WebDriverWait(self.driver, DELAY).until(EC.url_changes(target_url))
         self.driver.get(target_url)
 
-    def fill_in_text(self, text):
+    def fill_in_text(self, text: str) -> None:
+        """
+        | Controling Selenium browser input the text contents to chat box.
+        """
         # Wait until "send message" button appear and is clickable
         WebDriverWait(self.driver, DELAY).until(
             EC.element_to_be_clickable(
@@ -101,7 +113,10 @@ class FacebookMessageBot:
 
         text_box.send_keys(text)
 
-    def send_text(self):
+    def send_text(self) -> schedule.CancelJob:
+        """
+        | After the text contents are sent, return a schedule.CancelJob to tell the job is done.
+        """
         # Click the send button because enter doesn't work
         send_button = self.driver.find_element_by_css_selector("button[name='send']")
         send_button.click()
@@ -109,7 +124,10 @@ class FacebookMessageBot:
         return schedule.CancelJob
 
 
-def make_window(theme):
+def make_window(theme: str) -> None:
+    """
+    | Call this function to create the custom PySimpleGUI window.
+    """
     sg.theme(theme)
 
     # Input layout declaration
@@ -358,7 +376,10 @@ def make_window(theme):
     return sg.Window("FB Messenger Bot", layout)
 
 
-def update_input_status(content, window_output, warning_text):
+def update_input_status(content: str, window_output: str, warning_text: str) -> None:
+    """
+    | Everytime when user click "Ok" button will call this function to update the status string of input columns.
+    """
     if not content:
         window_output.update(warning_text, text_color="red")
     else:
