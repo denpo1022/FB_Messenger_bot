@@ -386,14 +386,6 @@ def update_input_status(content: str, window_output: str, warning_text: str) -> 
         window_output.update("")
 
 
-def declare_input_dict(input_name, values, window):
-    return {
-        "value": values["-INPUT " + input_name + "-"],
-        "output": window["-OUTPUT " + input_name + "-"],
-        "warning": input_name + " cannot be empty!",
-    }
-
-
 def main():
     # Create the GUI window
     window = make_window(sg.theme(THEME))
