@@ -12,6 +12,8 @@ import schedule
 
 DELAY = 5  # seconds
 LOGIN_URL = "https://m.facebook.com/login.php"
+M_HEAD = "https://m."
+WWW_HEAD = "https://www."
 
 
 class FacebookMessageBot:
@@ -65,8 +67,8 @@ class FacebookMessageBot:
         | Controling Selenium browser go to the target url with proper wait function.
         """
         # Replace https://www to https://m
-        if target_url.startswith("https://www."):
-            target_url = "https://m." + target_url[12:]
+        if target_url.startswith(WWW_HEAD):
+            target_url = M_HEAD + target_url[len(WWW_HEAD) :]
 
         WebDriverWait(self.driver, DELAY).until(EC.url_changes(target_url))
         self.driver.get(target_url)
