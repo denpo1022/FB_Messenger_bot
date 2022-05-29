@@ -37,7 +37,7 @@ class FacebookMessageBot:
 
     def login(self) -> None:
         """
-        | Controling Selenium browser object login FB using input data.
+        | Controlling Selenium browser object login FB using input data.
         """
         self.go_target_url(LOGIN_URL)
 
@@ -64,7 +64,7 @@ class FacebookMessageBot:
 
     def go_target_url(self, target_url: str) -> None:
         """
-        | Controling Selenium browser go to the target url with proper wait function.
+        | Controlling Selenium browser go to the target url with proper wait function.
         """
         # Replace https://www to https://m
         if target_url.startswith(WWW_HEAD):
@@ -75,7 +75,7 @@ class FacebookMessageBot:
 
     def fill_in_text(self, text: str) -> None:
         """
-        | Controling Selenium browser input the text contents to chat box.
+        | Controlling Selenium browser input the text contents to chat box.
         """
         # Wait until "send message" button appear and is clickable
         WebDriverWait(self.driver, DELAY).until(
