@@ -18,27 +18,26 @@ WWW_HEAD = "https://www."
 
 class FacebookMessageBot:
     def __init__(self, email: str, password: str, browser="Firefox") -> None:
+        """Initial function for FacebookMessageBot.
+
+        Args:
+            email (str): The email account used to login.
+            password (str): The password for the email.
+            browser (str, optional): The name of the browser. Defaults to "Firefox".
         """
-        | Initialization of creating Messenger bot instance.
-        """
-        # Store credentials for login
         self.email = email
         self.password = password
         if browser == "Chrome":
-            # Use chrome
             self.driver = webdriver.Chrome(
                 executable_path=ChromeDriverManager().install()
             )
         elif browser == "Firefox":
-            # Set it to Firefox
             self.driver = webdriver.Firefox(
                 executable_path=GeckoDriverManager().install()
             )
 
     def login(self) -> None:
-        """
-        | Controlling Selenium browser object login FB using input data.
-        """
+        """Controlling Selenium browser object login FB using input data."""
         self.go_target_url(LOGIN_URL)
 
         # Wait until the input box appear
@@ -63,8 +62,10 @@ class FacebookMessageBot:
         )
 
     def go_target_url(self, target_url: str) -> None:
-        """
-        | Controlling Selenium browser go to the target url with proper wait function.
+        """Controlling Selenium browser go to the target url with proper wait function.
+
+        Args:
+            target_url (str): The target url that webdriver will go to.
         """
         # Replace https://www to https://m
         if target_url.startswith(WWW_HEAD):
@@ -74,8 +75,10 @@ class FacebookMessageBot:
         self.driver.get(target_url)
 
     def fill_in_text(self, text: str) -> None:
-        """
-        | Controlling Selenium browser input the text contents to chat box.
+        """Controlling Selenium browser input the text contents to messenger chat box.
+
+        Args:
+            text (str): The text message that user wants to send.
         """
         # Wait until "send message" button appear and is clickable
         WebDriverWait(self.driver, DELAY).until(
@@ -107,8 +110,10 @@ class FacebookMessageBot:
         text_box.send_keys(text)
 
     def send_text(self) -> schedule.CancelJob:
-        """
-        | After the text contents are sent, return a schedule.CancelJob to tell the job is done.
+        """After the text are sent, return a schedule.CancelJob to tell the job is done.
+
+        Returns:
+            schedule.CancelJob: A object that tells schedule object it's time to cancel the job.
         """
         # Click the send button because enter doesn't work
         send_button = self.driver.find_element_by_css_selector("button[name='send']")
