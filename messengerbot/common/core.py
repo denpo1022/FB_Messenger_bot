@@ -93,10 +93,9 @@ class FacebookMessageBot:
             send_message_button = self.driver.find_element_by_css_selector(
                 "a[href^='/messages/thread/']"
             )
+            send_message_button.click()
         except Exception as e:
             print(e)
-
-        send_message_button.click()
 
         # Wait until the input text box appear
         WebDriverWait(self.driver, DELAY).until(
@@ -104,12 +103,11 @@ class FacebookMessageBot:
         )
         try:
             text_box = self.driver.find_element_by_id("composerInput")
+            text_box.send_keys(text)
         except Exception as e:
             print(e)
 
-        text_box.send_keys(text)
-
-    def send_text(self) -> schedule.CancelJob:
+    def send_text(self) -> type[schedule.CancelJob]:
         """After the text are sent, return a schedule.CancelJob to tell the job is done.
 
         Returns:
