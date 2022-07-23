@@ -5,7 +5,7 @@ import PySimpleGUI as sg
 SETTINGS = sg.UserSettings(filename="MessengerBot.json", path=".")
 
 
-def make_window(theme: str) -> None:
+def make_window(theme: str) -> sg.Window:
     """
     | Call this function to create the custom PySimpleGUI window.
     """
@@ -19,12 +19,14 @@ def make_window(theme: str) -> None:
         [sg.Text("Your Facebook account :")],
         [sg.Input(SETTINGS.get("-input mail-", ""), key="-INPUT MAIL-")],
         [sg.Text(size=(40, 1), key="-OUTPUT MAIL-")],
+
         # --------------------
         # Password
         # --------------------
         [sg.Text("Your password :")],
         [sg.Input(SETTINGS.get("-input password-", ""), key="-INPUT PASSWORD-")],
         [sg.Text(size=(40, 1), key="-OUTPUT PASSWORD-")],
+
         # --------------------
         # Browser
         # --------------------
@@ -37,12 +39,14 @@ def make_window(theme: str) -> None:
                 k="-COMBO BROWSER-",
             )
         ],
+
         # --------------------
         # Url
         # --------------------
         [sg.Text("Input target url :")],
         [sg.Input(SETTINGS.get("-input url-", ""), key="-INPUT URL-")],
         [sg.Text(size=(40, 1), key="-OUTPUT URL-")],
+
         # --------------------
         # Time
         # --------------------
@@ -234,6 +238,7 @@ def make_window(theme: str) -> None:
                 k="-COMBO SECOND-",
             ),
         ],
+
         # --------------------
         # Message
         # --------------------
@@ -246,6 +251,7 @@ def make_window(theme: str) -> None:
             )
         ],
         [sg.Text(size=(40, 1), key="-OUTPUT MESSAGE-")],
+
         # --------------------
         # Ok button
         # --------------------
