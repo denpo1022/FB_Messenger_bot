@@ -130,3 +130,5 @@ dmypy.json
 
 # For user input information saving
 *.json
+
+*.exe
