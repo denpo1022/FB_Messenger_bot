@@ -1,0 +1,9 @@
+name: msbot
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - selenium
+  - webdriver-manager
+  - schedule
+  - pysimplegui
