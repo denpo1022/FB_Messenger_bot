@@ -23,7 +23,6 @@ def run():
     while True:  # Loop for listening GUI events
         event, values = window.read()
         if event == "Ok":  # If press Ok button
-
             # Update input values from user
             EMAIL = {
                 "value": values["-INPUT MAIL-"],
@@ -84,7 +83,6 @@ def run():
     if values["-R CURRENT-"]:  # If choose Current radio option
         fb_bot.send_text()
     else:  # If choose Specify time radio option
-
         # Combine time input into correct format (ex: 21:10:02)
         input_time_string = (
             values["-COMBO HOUR-"]
