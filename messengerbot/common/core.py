@@ -6,17 +6,20 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
+import time
 import schedule
 
 
-DELAY = 10.0  # seconds
+DELAY = 5.0  # seconds
 LOGIN_URL = "https://m.facebook.com/login.php"
 M_HEAD = "https://m."
 WWW_HEAD = "https://www."
-MES_IMG_CSS = "img[src*='https://static.xx.fbcdn.net/rsrc.php/v3/y9/r/YjBUcSAL8TC.png']"
+MES_IMG_CSS = "img[src^='https://static.xx.fbcdn.net/rsrc.php/v3/']"
 
 
 class FacebookMessageBot:
+    """A class that offers simple APIs for manipulating FB messenger based on Selenium libraries."""
+
     def __init__(self, email: str, password: str, browser="Firefox") -> None:
         """Initial function for FacebookMessageBot.
 
@@ -82,7 +85,7 @@ class FacebookMessageBot:
             send_message_button = WebDriverWait(
                 self.driver, DELAY, ignored_exceptions=StaleElementReferenceException
             ).until(
-                EC.element_to_be_clickable(
+                EC.presence_of_all_elements_located(
                     (
                         By.CSS_SELECTOR,
                         MES_IMG_CSS,
@@ -91,32 +94,44 @@ class FacebookMessageBot:
                 "Cannot locate send message button!",
             )
             self.driver.implicitly_wait(DELAY)
-            ActionChains(self.driver).move_to_element(send_message_button).send_keys(
-                Keys.TAB
+            ActionChains(self.driver).move_to_element(
+                send_message_button[1]
             ).click().perform()
         except Exception as error:
             print("An exception occurred:", type(error).__name__, "-", error)
 
         # Wait until the input text box appear
         try:
-            # self.driver.implicitly_wait(DELAY)
             text_box = WebDriverWait(self.driver, DELAY).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, "div[aria-label='訊息']")),
                 "Cannot locate input text box!",
             )
-            self.driver.implicitly_wait(DELAY)
+            # self.driver.implicitly_wait(DELAY)
             ActionChains(self.driver).move_to_element(text_box).click().send_keys(
                 text
             ).perform()
         except Exception as error:
             print("An exception occurred:", type(error).__name__, "-", error)
 
-    def send_text(self) -> type[schedule.CancelJob]:
+    def send_text(self, text: str) -> type[schedule.CancelJob]:
         """After the text are sent, return a schedule.CancelJob to tell the job is done.
 
-        Returns:
-            schedule.CancelJob: A object that tells schedule object it's time to cancel the job.
+        Args:
+            text (str): The content string of user input.
+        Return:
+            schedule.CancelJob: An object that tells schedule object it's time to cancel the job.
         """
+        # Wait until the text is fully input
+        try:
+            WebDriverWait(self.driver, DELAY).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, "//span[text()='" + text + "']")
+                ),
+                "Cannot locate input text!",
+            )
+        except Exception as error:
+            print("An exception occurred:", type(error).__name__, "-", error)
+
         # Click the send button because enter doesn't work
         send_button = self.driver.find_element(
             By.CSS_SELECTOR, "path[d*='M16.6915026']"

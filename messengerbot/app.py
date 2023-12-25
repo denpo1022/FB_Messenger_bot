@@ -1,12 +1,13 @@
+"""Module providing a PySimpleGUI window for user to input information."""
 from datetime import datetime
+
+import time
+import sys
+import PySimpleGUI as sg
+import schedule
 
 from messengerbot.common.core import FacebookMessageBot
 from messengerbot.window.core import make_window, update_input_status
-
-import PySimpleGUI as sg
-import schedule
-import sys
-import time
 
 
 # Theme for PySimpleGUI
@@ -17,6 +18,7 @@ SETTINGS = sg.UserSettings(filename="MessengerBot.json", path=".")
 
 
 def run():
+    """Creating the PySimpleGUI window let user input and R/W core information."""
     # Create the GUI window
     window = make_window(sg.theme(THEME))
 
@@ -81,7 +83,7 @@ def run():
     fb_bot.fill_in_text(MESSAGE["value"])
 
     if values["-R CURRENT-"]:  # If choose Current radio option
-        fb_bot.send_text()
+        fb_bot.send_text(MESSAGE["value"])
     else:  # If choose Specify time radio option
         # Combine time input into correct format (ex: 21:10:02)
         input_time_string = (
