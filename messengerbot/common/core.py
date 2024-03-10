@@ -6,9 +6,11 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
+import logging
 import time
 import schedule
 
+logging.basicConfig(level=logging.INFO)
 
 DELAY = 5.0  # seconds
 LOGIN_URL = "https://m.facebook.com/login.php"
@@ -28,6 +30,9 @@ class FacebookMessageBot:
             password (str): The password for the email.
             browser (str, optional): The name of the browser. Defaults to "Firefox".
         """
+
+        logging.info("Getting into FacebookMessageBot __init__")
+
         self.email = email
         self.password = password
         if browser == "Chrome":
@@ -37,6 +42,9 @@ class FacebookMessageBot:
 
     def login(self) -> None:
         """Controlling Selenium browser object login FB using input data."""
+
+        logging.info("Getting into FacebookMessageBot login()")
+
         self.go_target_url(LOGIN_URL)
 
         # Wait until the input box appear
@@ -67,6 +75,9 @@ class FacebookMessageBot:
         Args:
             target_url (str): The target url that webdriver will go to.
         """
+
+        logging.info("Getting into FacebookMessageBot go_target_url(%s)", target_url)
+
         # Replace https://www to https://m
         if target_url.startswith(WWW_HEAD):
             target_url = M_HEAD + target_url[len(WWW_HEAD) :]
@@ -80,6 +91,9 @@ class FacebookMessageBot:
         Args:
             text (str): The text message that user wants to send.
         """
+
+        logging.info("Getting into FacebookMessageBot fill_in_text(%s)", text)
+
         # Wait until "send message" button appear and is clickable
         try:
             send_message_button = WebDriverWait(
@@ -121,6 +135,9 @@ class FacebookMessageBot:
         Return:
             schedule.CancelJob: An object that tells schedule object it's time to cancel the job.
         """
+
+        logging.info("Getting into FacebookMessageBot send_text(%s)", text)
+
         # Wait until the text is fully input
         try:
             WebDriverWait(self.driver, DELAY).until(
