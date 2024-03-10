@@ -1,3 +1,5 @@
+"""Main entry point."""
+
 from messengerbot import app
 
 
