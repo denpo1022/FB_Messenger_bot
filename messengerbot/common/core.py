@@ -1,3 +1,9 @@
+"""Module providing FacebookMessageBot class mainly used for this bot"""
+
+import logging
+import time
+import schedule
+
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
@@ -6,13 +12,16 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-import logging
-import time
-import schedule
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    filename="example.log",
+    filemode="w",
+    encoding="utf-8",
+    format="%(asctime)s %(levelname)s:%(name)s:%(message)s",
+    level=logging.DEBUG,
+)
 
-DELAY = 5.0  # seconds
+DELAY = 10.0  # seconds
 LOGIN_URL = "https://m.facebook.com/login.php"
 M_HEAD = "https://m."
 WWW_HEAD = "https://www."
@@ -149,10 +158,21 @@ class FacebookMessageBot:
         except Exception as error:
             print("An exception occurred:", type(error).__name__, "-", error)
 
+        # Wait until the chat box is fully loaded
+        # TODO: how to know when the chat box is fully loaded?
+        time.sleep(5)
+
+        try:
+            send_button = WebDriverWait(self.driver, DELAY).until(
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, "path[d*='M16.6915026']")
+                ),
+                "Cannot locate send text button!",
+            )
+        except Exception as error:
+            print("An exception occurred:", type(error).__name__, "-", error)
+
         # Click the send button because enter doesn't work
-        send_button = self.driver.find_element(
-            By.CSS_SELECTOR, "path[d*='M16.6915026']"
-        )
         send_button.click()
 
         return schedule.CancelJob
